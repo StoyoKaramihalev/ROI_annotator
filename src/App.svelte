@@ -61,11 +61,11 @@
   <div class="container" on:click={onClick}>
     <svg bind:this={svg}>
       {#each Object.values(regions) as r}
-        <polyline points={r.map(({x, y}) => `${x},${y}`).join(' ')} fill="none" stroke="red" stroke-width="2"/>
+        <polyline points={r.map(({x, y}) => `${x},${y}`).join(' ')} fill="none" stroke="darkgreen" stroke-width="2"/>
       {/each}
-      <polyline {points} fill="none" stroke="white" stroke-width="2" stroke-dasharray="10,10"/>
+      <polyline {points} fill="none" stroke="lightblue" stroke-width="2" stroke-dasharray="10,10"/>
       {#each circles as {x, y}}
-        <circle cx={x} cy={y} {r} fill="white"/>
+        <circle cx={x} cy={y} {r} fill="lightblue"/>
       {/each}
     </svg>
     <video src={videoUrl} bind:currentTime bind:duration />
@@ -83,7 +83,7 @@
 
 <footer>
   <p>Developed by: <a href="https://github.com/mkaramihalev">Marin Karamihalev</a></p>
-  <p><a href="https://github.com/mkaramihalev/stoyo-roi">Repository</a> on GitHub</p>
+  <p><a href="https://github.com/StoyoKaramihalev/ROI_annotator">Repository</a> on GitHub</p>
 </footer>
 
 <style>
