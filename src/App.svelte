@@ -1,7 +1,6 @@
 <script>
   let files = []
   let selecting = false
-  let duration = 5
   let r = 5
   let currentTime = 0
   let roi = []
@@ -10,15 +9,14 @@
   let regionCount = 0
   let svg
   let downloadName = 'regions.json'
-  let videoEl
+  let imgEl
 
 
   const onClick = ({x, y}) => {
-    if (!selecting) return //do nothing if not selecting
+    if (!selecting) return
     let cx = x - svgPos.left
     let cy = y - svgPos.top
 
-    console.log({cx, cy})
     if (circles.length > 1) {
       let fx = circles[0].x
       let fy = circles[0].y
@@ -37,22 +35,22 @@
     roi = []
   }
   const save = () => {
-    regions[videoName + '_' + currentTime + (++regionCount)] = { name, points:  roi.slice() }
+    regions[imgName + '_' + currentTime + (++regionCount)] = { name, points:  roi.slice() }
     roi = []
     circles = []
   }
   const pointify = r => r.map(({x, y}) => `${x},${y}`).join(' ')
   const setSvgWidth = () => {
-    svg.style.width = videoEl.clientWidth
-    svg.style.height = videoEl.clientHeight
+    svg.style.width = imgEl.clientWidth
+    svg.style.height = imgEl.clientHeight
   }
 
 
   $: svgPos = svg && {left: svg.getBoundingClientRect().x, top: svg.getBoundingClientRect().y}
   $: points = pointify(roi)
-  $: video = files.length > 0 ? files[0] : null
-  $: videoUrl =  video ? URL.createObjectURL(video) : ''
-  $: videoName = video ? video.name : 'unknown'
+  $: img = files.length > 0 ? files[0] : null
+  $: imgUrl =  img ? URL.createObjectURL(img) : ''
+  $: imgName = img ? img.name : 'unknown'
   $: name = 'region_' + regionCount
 </script>
 
@@ -61,8 +59,7 @@
 </header>
 
 <main>
-	<p>Select video: <input type="file" accept="video/*" bind:files></p>
-  <input type="range" min="0" max={duration} step="0.1" bind:value={currentTime} />
+	<p>Select image: <input type="file" accept="image/*" bind:files></p>
   <button class:pointer={selecting} on:click={() => selecting = true}>Define ROI</button>
   <button on:click={clear}>Clear ROI</button>
   <button disabled={roi.length < 4} on:click={save}>Save ROI</button>
@@ -79,7 +76,7 @@
         <circle cx={x} cy={y} {r} fill="lightblue"/>
       {/each}
     </svg>
-    <video on:loadeddata={setSvgWidth} bind:this={videoEl} src={videoUrl} bind:currentTime bind:duration />
+    <img on:load={setSvgWidth} bind:this={imgEl} src={imgUrl} alt="Image to annotate"/>
   </div>
 
   {#if Object.keys(regions).length > 0}
@@ -127,7 +124,7 @@
     position: absolute;
   }
 
-	video {
+	img {
     z-index: 1;
     height: 40vh;
   }
