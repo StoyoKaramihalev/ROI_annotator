@@ -8,15 +8,17 @@
   let circles = []
   let regions = {}
   let regionCount = 0
-  let width = 600
-  let height = 400
   let svg
+  let downloadName = 'regions.json'
+  let videoEl
 
 
   const onClick = ({x, y}) => {
-    if (!selecting) return
+    if (!selecting) return //do nothing if not selecting
     let cx = x - svgPos.left
     let cy = y - svgPos.top
+
+    console.log({cx, cy})
     if (circles.length > 1) {
       let fx = circles[0].x
       let fy = circles[0].y
@@ -35,50 +37,58 @@
     roi = []
   }
   const save = () => {
-    regions[videoName + '_' + currentTime + (++regionCount)] = roi.slice()
+    regions[videoName + '_' + currentTime + (++regionCount)] = { name, points:  roi.slice() }
     roi = []
     circles = []
+  }
+  const pointify = r => r.map(({x, y}) => `${x},${y}`).join(' ')
+  const setSvgWidth = () => {
+    svg.style.width = videoEl.clientWidth
+    svg.style.height = videoEl.clientHeight
   }
 
 
   $: svgPos = svg && {left: svg.getBoundingClientRect().x, top: svg.getBoundingClientRect().y}
-  $: points = roi.map(({x, y}) => `${x},${y}`).join(' ')
+  $: points = pointify(roi)
   $: video = files.length > 0 ? files[0] : null
   $: videoUrl =  video ? URL.createObjectURL(video) : ''
   $: videoName = video ? video.name : 'unknown'
+  $: name = 'region_' + regionCount
 </script>
 
 <header>
   <h1>ROI annotator</h1>
 </header>
 
-<main class:pointer={selecting}>
+<main>
 	<p>Select video: <input type="file" accept="video/*" bind:files></p>
   <input type="range" min="0" max={duration} step="0.1" bind:value={currentTime} />
-  <button on:click={() => selecting = true}>Define ROI</button>
+  <button class:pointer={selecting} on:click={() => selecting = true}>Define ROI</button>
   <button on:click={clear}>Clear ROI</button>
   <button disabled={roi.length < 4} on:click={save}>Save ROI</button>
-  <div class="container" on:click={onClick}>
-    <svg bind:this={svg}>
-      {#each Object.values(regions) as r}
-        <polyline points={r.map(({x, y}) => `${x},${y}`).join(' ')} fill="none" stroke="darkgreen" stroke-width="2"/>
+  <input bind:value={name} required minlength="1"/>
+
+  <div class="container">
+    <svg bind:this={svg} on:click={onClick} class:pointer={selecting}>
+      {#each Object.values(regions) as {name: rname, points}}
+        <text x={points[0].x} y={points[0].y - 5} fill="white">{rname}</text>
+        <polyline points={pointify(points)} fill="none" stroke="darkgreen" stroke-width="2"/>
       {/each}
       <polyline {points} fill="none" stroke="lightblue" stroke-width="2" stroke-dasharray="10,10"/>
       {#each circles as {x, y}}
         <circle cx={x} cy={y} {r} fill="lightblue"/>
       {/each}
     </svg>
-    <video src={videoUrl} bind:currentTime bind:duration />
+    <video on:loadeddata={setSvgWidth} bind:this={videoEl} src={videoUrl} bind:currentTime bind:duration />
   </div>
-  <ul>
-  {#each Object.keys(regions) as region}
-    <li>{region}</li>
-  {/each}
-  </ul>
+
   {#if Object.keys(regions).length > 0}
-  <a download="regions.json"
-    href={`data:application/json,${JSON.stringify(regions, null, 2)}`}>Download regions</a>
+  <p>
+    <a download={downloadName} href={`data:application/json,${JSON.stringify(regions, null, 4)}`}>Download regions</a>
+    <input bind:value={downloadName}/>
+  </p>
   {/if}
+
 </main>
 
 <footer>
@@ -100,8 +110,8 @@
 		max-width: 240px;
     margin: 0 auto;
     background: rgb(255, 255, 255);
-    width: 100%;
-    height: 75%;
+    width: 90%;
+    height: 70%;
 	}
 
   .pointer {
@@ -109,22 +119,17 @@
   }
 
   .container {
-    width: 90vw;
-    height: 60vh;
     position: relative;
   }
 
   svg {
     z-index: 2;
     position: absolute;
-    height: 100%;
-    width: 100%;
   }
 
 	video {
     z-index: 1;
-    height: 100%;
-    width: 100%;
+    height: 40vh;
   }
 
 	@media (min-width: 640px) {
