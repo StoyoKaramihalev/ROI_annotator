@@ -1,6 +1,8 @@
 # ROI_annotator
 Annotate ROIs in video frames.
 
+Template used: https://github.com/OliwerDrywa/svelte-pwa
+
 # Install
 Make sure you have node and npm installed
 
@@ -10,5 +12,7 @@ Make sure you have node and npm installed
 # Development version
 `npm run dev`
 
-# Build
+# Publishing
+Before publishing make sure to run:
 `npm run build`
+Then serve the content of the public folder.

@@ -1,5 +1,5 @@
 {
-  "name": "svelte-app",
+  "name": "roi-annotator",
   "version": "1.0.0",
   "scripts": {
     "build": "rollup -c",
@@ -16,6 +16,7 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
-    "sirv-cli": "^0.4.4"
+    "sirv-cli": "^0.4.4",
+    "workbox-sw": "^5.1.3"
   }
 }
