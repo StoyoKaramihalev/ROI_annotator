@@ -86,14 +86,29 @@
 </script>
 
 <header>
-  <h1>ROI annotator</h1>
+  <h1>Annotate regions of interest (ROIs)</h1>
 </header>
-
+<hr style="solid">
 <main>
-	<p>Select image: <input type="file" accept="image/*" bind:files></p>
-	<p>(Optional) Select regions: <input type="file" accept="application/JSON" on:change={loadRegion}></p>
-  <p><button class:pointer={selecting === 'refer'} on:click={() => selecting = 'refer'}>Create reference</button>
-     <input bind:value={regions.referenceValue} placeholder="Reference value"/></p>
+<div class="row" style="line-height:50%">
+  <div class="column">
+	  <p>Select image:</p> 
+    <p style="font-size:0.8em;font-style:italic;">Choose a representative frame you wish to annotate.</p>
+    <p><input type="file" accept="image/*" bind:files></p>
+  </div>
+  <div class="column">
+	  <p>Select regions (optional): </p>
+    <p style="font-size:0.8em;font-style:italic;">If an ROI file already exists, you may load it here.</p>
+    <p><input type="file" accept="application/JSON" on:change={loadRegion}></p>
+  </div>
+  <p>Add reference line:</p>
+  <p style="font-size:0.8em;font-style:italic;">Draw line between two reference points and input </p>
+  <p>
+  <button class:pointer={selecting === 'refer'} on:click={() => selecting = 'refer'}>Draw reference</button>
+     <input bind:value={regions.referenceValue} placeholder="Reference value"/>
+  </p>
+<hr style="solid">
+<div class="row" style = "text-align:center;">
   <button class:pointer={selecting === 'define'} on:click={() => selecting = 'define'}>Define ROI</button>
   <button on:click={clear}>Clear ROI</button>
   <button disabled={roi.length < 4} on:click={save}>Save ROI</button>
@@ -113,56 +128,80 @@
             />
         {/each}
       {/each}
-      <polyline {points} fill="none" stroke="lightblue" stroke-width="2" stroke-dasharray="10,10"/>
+      <polyline {points} fill="none" stroke="lightblue" stroke-width="1" stroke-dasharray="5,5"/>
       {#each circles as {x, y}}
         <circle cx={x} cy={y} {r} fill="lightblue"/>
       {/each}
       {#if regions.reference.length > 0}
-        <polyline points={pointify(regions.reference)} fill="none" stroke="darkred" stroke-width="3"/>
+        <polyline points={pointify(regions.reference)} fill="none" stroke="darkred" stroke-width="2"/>
       {/if}
     </svg>
-    <img on:load={setSvgWidth} bind:this={imgEl} src={imgUrl} alt="Annotate"/>
+    <img on:load={setSvgWidth} bind:this={imgEl} src={imgUrl} alt=" Image for annotation goes here"/>
+  </div>
+
   </div>
 
   {#if Object.keys(regions).length > 0}
+  <div class="row" style="text-align:center">
   <p>
-    <a download={downloadName} href={`data:application/json,${JSON.stringify(regions, null, 4)}`}>Download regions</a>
+    <a download={downloadName} href={`data:application/json,${JSON.stringify(regions, null, 4)}`}>Save</a>
     <input bind:value={downloadName}/>
   </p>
+  </div>
   {/if}
 
 </main>
 
 <footer>
   <p>Developed by: <a href="https://github.com/mkaramihalev">Marin Karamihalev</a></p>
-  <p><a href="https://github.com/StoyoKaramihalev/ROI_annotator">Repository</a> on GitHub</p>
+  <p>GitHub <a href="https://github.com/StoyoKaramihalev/ROI_annotator">Repository</a></p>
 </footer>
 
 <style>
 
   header {
     text-align: center;
-    background: rgb(240, 240, 240);
-    padding: 1em;
+    padding: 0.2em;
   }
 
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
+  footer {
+    text-align: center;
+    padding: 2em;
+    font-size: 0.8em;
+  }
+
+  h1 {
+    font-size: 1.5em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 100;
+  }
+
+  h2 {
+    font-size: 1.1em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 100;
+  }
+	
+  main {
+		text-align: left;
+		padding: 0.2em;
     margin: 0 auto;
     background: rgb(255, 255, 255);
-    width: 90%;
-    height: 70%;
+    width: 100%;
+    height: 80%;
+    font-weight: 100;
 	}
-
+  
   img {
     border-color: black;
-    border-width: 5px;
+    border-width: 1px;
     border-style: dashed;
-    border-radius: 3px;
+    border-radius: 0;
   }
-
+  .column {
+    float: left;
+    width: 50%;
+  }
   .not-selectable {
     user-select: none;
   }
