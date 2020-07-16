@@ -1,7 +1,10 @@
 # ROI_annotator
-Annotate ROIs in video frames.
+This application can be used to annotate regions of interest (ROIs) in video frames. 
+PWA template can be found [here](https://github.com/OliwerDrywa/svelte-pwa).
 
-Template used: https://github.com/OliwerDrywa/svelte-pwa
+
+# Run public app
+[ROI_annotator](https://stoyokaramihalev.github.io/ROI_annotator/public/index.html)
 
 # Install
 Make sure you have node and npm installed
